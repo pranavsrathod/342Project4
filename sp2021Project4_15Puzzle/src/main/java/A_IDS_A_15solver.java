@@ -1,3 +1,6 @@
+//Pranav Rathod and Parth Tawde
+//Project 4 - Puzzel
+//Due May 4
 import java.util.ArrayList;
 
 public class A_IDS_A_15solver {
