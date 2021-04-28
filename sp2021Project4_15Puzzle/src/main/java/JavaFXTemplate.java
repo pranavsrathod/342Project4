@@ -186,4 +186,6 @@ public class JavaFXTemplate extends Application {
 		borderPane.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, bSize)));
 		return new Scene(borderPane, 400, 400);
 	}
+
 }
+
