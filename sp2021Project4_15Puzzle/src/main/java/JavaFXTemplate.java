@@ -153,7 +153,7 @@ public class JavaFXTemplate extends Application {
 					
 					num = tempArr[k];
 					k++;
-					board.add(box, i, j);
+					board.add(box, j, i);
 					checkArray.add(box);
 			}
 		}
@@ -165,19 +165,22 @@ public class JavaFXTemplate extends Application {
 	}
 	private void configure(GameButton tile) {
 		int buttonPos = checkArray.indexOf(tile);
-		String text = tile.getText();
-		if (text.length()!=0) {
-		try {
-			tile.setOnAction(e -> {
-				boolean flag = false;
-				int i1, j1;
-				System.out.println(buttonPos);
-			});
-		} catch (ArrayIndexOutOfBoundsException f) {
-			
-		}
-		}
+		tile.setOnAction(e -> {
+			System.out.println(buttonPos);
+			if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {
+				swapTile(tile, checkArray.get(buttonPos - 1));
+			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {
+				swapTile(tile, checkArray.get(buttonPos + 1));
+			} else if (((buttonPos - 4) >= 0) && (checkArray.get(buttonPos - 4).tileNum == 0)) {
+				swapTile(tile, checkArray.get(buttonPos - 4));
+			} else if (((buttonPos + 4) <= 15) && (checkArray.get(buttonPos + 4).tileNum == 0)) {
+				swapTile(tile, checkArray.get(buttonPos + 4));
+			}
+		});
 		
+	}
+	private void swapTile(GameButton tile1, GameButton tile2) {
+		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 	}
 	public Scene winScene() {
 		Image image = new Image("tenor.gif");

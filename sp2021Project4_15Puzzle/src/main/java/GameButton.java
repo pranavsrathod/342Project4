@@ -8,7 +8,7 @@ public class GameButton extends Button{
 	GameButton(int number){
 		// setting the default instances of the button
 		super("");
-		tileNum = 0;
+		tileNum = number;
 		if (number == 0) {
 			this.setText("");
 		} else {
