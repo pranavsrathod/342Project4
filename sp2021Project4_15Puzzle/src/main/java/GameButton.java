@@ -4,10 +4,16 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Font;
 public class GameButton extends Button{
 	public int color;
-	GameButton(){
+	public int tileNum;
+	GameButton(int number){
 		// setting the default instances of the button
 		super("");
-		Button button = new Button();
-		button.setPrefSize(200,200);
+		tileNum = 0;
+		if (number == 0) {
+			this.setText("");
+		} else {
+			this.setText(Integer.toString(number));
+		}
+		this.setPrefSize(80,80);
 	}
 }
