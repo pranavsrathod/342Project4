@@ -157,7 +157,7 @@ public class JavaFXTemplate extends Application {
 					checkArray.add(box);
 			}
 		}
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 16; i++) {
 			configure(checkArray.get(i));
 		}
 		
