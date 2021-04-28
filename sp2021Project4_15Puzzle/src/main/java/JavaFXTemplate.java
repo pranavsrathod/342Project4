@@ -1,4 +1,5 @@
 // Pranav Rathod and Parth Tawde
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,7 +68,10 @@ public class JavaFXTemplate extends Application {
 	private int array9[] = {1, 3, 7, 0, 11, 2, 8, 4, 10, 5, 14, 12, 9, 6, 13, 15};
 	private int array10[] = {5, 1, 4, 8, 10, 6, 0, 3, 15, 7, 9, 11, 14, 2, 13, 12};
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
-	private GameButton checkArray[][] = new GameButton[4][4];
+	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
+	//private GameButton checkArray[][] = new GameButton[4][4];
+	private GameButton empty, dummyButton;
+	private boolean emptyFlag = false;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
@@ -117,7 +121,6 @@ public class JavaFXTemplate extends Application {
 		board.setVgap(10);
 		board.setHgap(10);
 		SetConfigurations();
-		configure();
 		board.setStyle("-fx-background-color: #00FFFF");
 		board.setAlignment(Pos.CENTER);
 		// Menu Bar
@@ -143,54 +146,38 @@ public class JavaFXTemplate extends Application {
 		tempArr = arrays.get(index);
 		int k = 0;
 		int num = 0;
+//		int emptyRow, emptyCol;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-					GameButton box = new GameButton();
-					box.setPrefSize(80, 80);
+					GameButton box = new GameButton(tempArr[k]);
+					
 					num = tempArr[k];
 					k++;
-					if (num == 0) {
-						box.setText("");
-					} else {
-						box.setText(String.valueOf(num));
-					}
-					board.add(box, j, i);
-					checkArray[i][j] = box;
+					board.add(box, i, j);
+					checkArray.add(box);
 			}
 		}
+		for (int i = 0; i < 8; i++) {
+			configure(checkArray.get(i));
+		}
+		
+		
 	}
-	public void configure() {
-		GameButton box = new GameButton();
-
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				if (checkArray[j][i].getText() == "") {
-					column = j;
-					row = i;
-				}
-			}
+	private void configure(GameButton tile) {
+		int buttonPos = checkArray.indexOf(tile);
+		String text = tile.getText();
+		if (text.length()!=0) {
+		try {
+			tile.setOnAction(e -> {
+				boolean flag = false;
+				int i1, j1;
+				System.out.println(buttonPos);
+			});
+		} catch (ArrayIndexOutOfBoundsException f) {
+			
 		}
-//		box = new EventHandler<ActionEvent>(){
-//			public void handle(ActionEvent event){
-//				Button b = (Button)event.getSource();
-//				b.setDisable(true);
-//			//	primaryStage.setScene(sceneMap.get("scene"));
-//				pause.play(); //calls setOnFinished
-//			}
-//		};
-//		System.out.println(checkArray[column][row+1].getText());
-		box.setOnAction(e -> {
-			if (box.getText().equals(checkArray[column-1][row].getText())) {
-				checkArray[column][row].setText(box.getText());
-				box.setText("");
-			} else if (box.getText().equals(checkArray[column][row+1].getText())) {
-				box.setText("");
-			} else if (box.getText().equals(checkArray[column][row-1].getText())) {
-				box.setText("");
-			} else if (box.getText().equals(checkArray[column+1][row].getText())) {
-				box.setText("");
-			}
-		});
+		}
+		
 	}
 	public Scene winScene() {
 		Image image = new Image("tenor.gif");
