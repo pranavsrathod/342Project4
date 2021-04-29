@@ -67,6 +67,7 @@ public class JavaFXTemplate extends Application {
 	private int array8[] = {3, 1, 12, 6, 2, 8, 4, 14, 5, 15, 11, 0, 9, 13, 10, 7};
 	private int array9[] = {1, 3, 7, 0, 11, 2, 8, 4, 10, 5, 14, 12, 9, 6, 13, 15};
 	private int array10[] = {5, 1, 4, 8, 10, 6, 0, 3, 15, 7, 9, 11, 14, 2, 13, 12};
+	private int solving_array[] = {1,0,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
 	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
 	//private GameButton checkArray[][] = new GameButton[4][4];
@@ -135,6 +136,9 @@ public class JavaFXTemplate extends Application {
 		// setting menu bar
 		menu.getMenus().addAll(options);
 		menu.setStyle("-fx-background-color: white");
+		exit.setOnAction(e -> {
+			System.exit(0);
+		});
 		BorderPane pane = new BorderPane();
 		pane.setCenter(board);
 		pane.setTop(menu);
@@ -143,7 +147,8 @@ public class JavaFXTemplate extends Application {
 	public void SetConfigurations() {
 		Random randomNumber = new Random();
 		int index = randomNumber.nextInt(arrays.size() - 1);
-		tempArr = arrays.get(index);
+//		tempArr = arrays.get(index);
+		tempArr = solving_array;
 		int k = 0;
 		int num = 0;
 //		int emptyRow, emptyCol;
@@ -167,20 +172,47 @@ public class JavaFXTemplate extends Application {
 		int buttonPos = checkArray.indexOf(tile);
 		tile.setOnAction(e -> {
 			System.out.println(buttonPos);
-			if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {
+			if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {  // left
 				swapTile(tile, checkArray.get(buttonPos - 1));
-			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {
+			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {  // right
 				swapTile(tile, checkArray.get(buttonPos + 1));
-			} else if (((buttonPos - 4) >= 0) && (checkArray.get(buttonPos - 4).tileNum == 0)) {
+			} else if (((buttonPos - 4) >= 0) && (checkArray.get(buttonPos - 4).tileNum == 0)) {  // up
 				swapTile(tile, checkArray.get(buttonPos - 4));
-			} else if (((buttonPos + 4) <= 15) && (checkArray.get(buttonPos + 4).tileNum == 0)) {
+			} else if (((buttonPos + 4) <= 15) && (checkArray.get(buttonPos + 4).tileNum == 0)) {  // down
 				swapTile(tile, checkArray.get(buttonPos + 4));
 			}
 		});
 		
 	}
-	private void swapTile(GameButton tile1, GameButton tile2) {
-		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+	private void swapTile(GameButton tile1, GameButton tile2) { 
+//		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		String temp = tile1.getText();
+		int tempNum = tile1.tileNum;
+		tile1.setText(tile2.getText());
+		tile1.tileNum = tile2.tileNum;
+		tile2.setText(temp);
+		tile2.tileNum = tempNum;
+//		System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		checkWin();
+	}
+	private void checkWin() {
+		boolean flag = true;
+		for (int i = 0; i < 16; i++) {
+			int var = checkArray.get(i).tileNum;
+			if (var != i) {
+				flag = false;
+				break;
+			}
+		}
+		if (flag) {
+			System.out.println("WON!!");
+			PauseTransition halt = new PauseTransition(Duration.seconds(3));
+			halt.setOnFinished(e -> {
+				dummyStage.setScene(winScene());
+//				dummyStage.show();
+			});
+			halt.play();
+		}
 	}
 	public Scene winScene() {
 		Image image = new Image("tenor.gif");
