@@ -47,12 +47,14 @@ public class JavaFXTemplate extends Application {
 	private ImageView view;
 	private Stage dummyStage;
 	private int count = 0;
+	private int num = 0;
 	private GridPane board;
 	private MenuBar menu;
 	private MenuItem AI_H1;
 	private MenuItem AI_H2;
 	private MenuItem exit;
 	private MenuItem solution;
+	private MenuItem newPuzzle;
 	private Menu options;
 	private int column = 0;
 	private int row = 0;
@@ -69,6 +71,7 @@ public class JavaFXTemplate extends Application {
 	private int array10[] = {5, 1, 4, 8, 10, 6, 0, 3, 15, 7, 9, 11, 14, 2, 13, 12};
 	private int solving_array[] = {1,0,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
+//	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
 	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
 	//private GameButton checkArray[][] = new GameButton[4][4];
 	private GameButton empty, dummyButton;
@@ -118,6 +121,7 @@ public class JavaFXTemplate extends Application {
 	}
 	public Scene gameScene() {
 //		 Grid Pane
+		
 		board = new GridPane();
 		board.setVgap(10);
 		board.setHgap(10);
@@ -130,14 +134,20 @@ public class JavaFXTemplate extends Application {
 		AI_H1 = new MenuItem("AI_H1");
 		AI_H2 = new MenuItem("AI_H2");
 		exit = new MenuItem("exit");
+		newPuzzle = new MenuItem("New Puzzle");
 		solution = new MenuItem("solution");
 		// setting up menu items
-		options.getItems().addAll(AI_H1, AI_H2, solution, exit);
+		options.getItems().addAll(newPuzzle, AI_H1, AI_H2, solution,exit);
 		// setting menu bar
 		menu.getMenus().addAll(options);
 		menu.setStyle("-fx-background-color: white");
 		exit.setOnAction(e -> {
 			System.exit(0);
+		});
+		newPuzzle.setOnAction(e -> {
+			board = new GridPane();
+			SetConfigurations();
+			dummyStage.setScene(gameScene());
 		});
 		BorderPane pane = new BorderPane();
 		pane.setCenter(board);
@@ -145,17 +155,15 @@ public class JavaFXTemplate extends Application {
 		return new Scene(pane, 400, 400);
 	}
 	public void SetConfigurations() {
+		checkArray = new ArrayList<GameButton>();
 		Random randomNumber = new Random();
-		int index = randomNumber.nextInt(arrays.size() - 1);
-//		tempArr = arrays.get(index);
-		tempArr = solving_array;
+		int index = randomNumber.nextInt(arrays.size() -1);
+		tempArr = arrays.get(index);
 		int k = 0;
-		int num = 0;
 //		int emptyRow, emptyCol;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 					GameButton box = new GameButton(tempArr[k]);
-					
 					num = tempArr[k];
 					k++;
 					board.add(box, j, i);
@@ -185,14 +193,14 @@ public class JavaFXTemplate extends Application {
 		
 	}
 	private void swapTile(GameButton tile1, GameButton tile2) { 
-//		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		String temp = tile1.getText();
 		int tempNum = tile1.tileNum;
 		tile1.setText(tile2.getText());
 		tile1.tileNum = tile2.tileNum;
 		tile2.setText(temp);
 		tile2.tileNum = tempNum;
-//		System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		checkWin();
 	}
 	private void checkWin() {
@@ -215,12 +223,29 @@ public class JavaFXTemplate extends Application {
 		}
 	}
 	public Scene winScene() {
+		Button b1 = new Button("New Game");
+		Button b2 = new Button("Exit");
+		b1.setOnAction(e -> {
+			board = new GridPane();
+			SetConfigurations();
+			dummyStage.setScene(gameScene());
+		});
+		Label label = new Label("You Won!!");
+		label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+		label.setStyle("-fx-bar-fill: white;");
+		label.setAlignment(Pos.CENTER);
+		HBox hBox = new HBox(10, b1, b2);
+		hBox.setAlignment(Pos.CENTER);
+		VBox vBox = new VBox(200, label, hBox);
+		vBox.setAlignment(Pos.CENTER);
 		Image image = new Image("tenor.gif");
 		BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
 		BorderPane borderPane = new BorderPane();
 		borderPane.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, bSize)));
+		borderPane.setCenter(vBox);
 		return new Scene(borderPane, 400, 400);
 	}
 
+	
 }
 
