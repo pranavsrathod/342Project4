@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javafx.scene.paint.Color;
 import javafx.scene.layout.BackgroundFill;
@@ -73,9 +75,11 @@ public class JavaFXTemplate extends Application {
 	private int array9[] = {1, 3, 7, 0, 11, 2, 8, 4, 10, 5, 14, 12, 9, 6, 13, 15};
 	private int array10[] = {5, 1, 4, 8, 10, 6, 0, 3, 15, 7, 9, 11, 14, 2, 13, 12};
 	private int solving_array[] = {1,0,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	private int testArray[] = {0, 14, 13, 12, 15, 9, 5, 8, 11, 7, 4, 1, 3, 10, 6, 2};
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
-//	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
-	ExecutorService ex;
+	ArrayList<Node> solutionPath = new ArrayList<Node>();
+	//	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
+	ExecutorService ex = Executors.newFixedThreadPool(10);
 	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
 	//private GameButton checkArray[][] = new GameButton[4][4];
 	private GameButton empty, dummyButton;
@@ -142,8 +146,22 @@ public class JavaFXTemplate extends Application {
 		newPuzzle = new MenuItem("New Puzzle");
 		solution = new MenuItem("solution");
 		
-		AI_H1.setOnAction(e->heuristic1());
-		AI_H2.setOnAction(e->heuristic2());
+		AI_H1.setOnAction(e->{
+			try {
+				heuristic1();
+			} catch (InterruptedException | ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		AI_H2.setOnAction(e->{
+			try {
+				heuristic2();
+			} catch (InterruptedException | ExecutionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		// setting up menu items
 		options.getItems().addAll(newPuzzle, AI_H1, AI_H2, solution,exit);
 		// setting menu bar
@@ -188,13 +206,21 @@ public class JavaFXTemplate extends Application {
 		
 	}
 	
-	public void heuristic1() {
-		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver(1, tempArr);});
-		t.start();
+	public void heuristic1() throws InterruptedException, ExecutionException {
+		Future<ArrayList<Node>> future = ex.submit(new MyCall(testArray, 1, "heuristicOne"));
+		ex.submit(() -> {
+			try {
+				solutionPath.addAll(future.get());
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
 	}
-	public void heuristic2() {
-		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver(2, tempArr);});
-		t.start();
+	public void heuristic2() throws InterruptedException, ExecutionException {
+		Future<ArrayList<Node>> future = ex.submit(new MyCall(testArray, 2, "heuristicTwo"));
+		solutionPath.addAll(future.get());
 	}
 	
 	private void configure(GameButton tile, int buttonPos) {

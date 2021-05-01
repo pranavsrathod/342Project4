@@ -4,7 +4,7 @@
 import java.util.ArrayList;
 
 public class A_IDS_A_15solver {
-	
+	ArrayList<Node> solutionPath;
 	/*
 	 * @author Mark Hallenbeck
 	 * Copyright© 2014, Mark Hallenbeck, All Rights Reservered.
@@ -21,15 +21,15 @@ public A_IDS_A_15solver(int aiType, int array[]){
 		
 		if(aiType == 1) {
 				
-		System.out.println("\nStarting A* Search with heuristic #1....This may take a while\n\n");
+//		System.out.println("\nStarting A* Search with heuristic #1....This may take a while\n\n");
 		
-//		A_Star(startState, "heuristicOne");							//A* search with heuristic 1 (misplaced tiles)
+		A_Star(startState, "heuristicOne");							//A* search with heuristic 1 (misplaced tiles)
 		
 		} else {
 		
-		System.out.println("\nStarting A* Search with heuristic #2....This may take a while\n\n");
+//		System.out.println("\nStarting A* Search with heuristic #2....This may take a while\n\n");
 		
-//		A_Star(startState, "heuristicTwo");							//A* search with heuristic 2 (manhattan)
+		A_Star(startState, "heuristicTwo");							//A* search with heuristic 2 (manhattan)
 		}
 		
 		
@@ -65,7 +65,7 @@ public A_IDS_A_15solver(int aiType, int array[]){
 		}
 		else											//found a solution so, get the path and print it
 		{
-			ArrayList<Node> solutionPath = start_A_Star.getSolutionPath(solution);	//creates ArrayList of solution path
+			solutionPath = start_A_Star.getSolutionPath(solution);	//creates ArrayList of solution path
 			
 			printSolution(solutionPath);
 			
@@ -106,7 +106,10 @@ public A_IDS_A_15solver(int aiType, int array[]){
 				System.out.print("\n");
 		}
 	
-}
+	}
+	public ArrayList<Node> getSolution() {
+		return solutionPath;
+	}
 
 
 
