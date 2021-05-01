@@ -171,15 +171,14 @@ public class JavaFXTemplate extends Application {
 			}
 		}
 		for (int i = 0; i < 16; i++) {
-			configure(checkArray.get(i));
+			configure(checkArray.get(i), i);
 		}
 		
 		
 	}
-	private void configure(GameButton tile) {
-		int buttonPos = checkArray.indexOf(tile);
+	private void configure(GameButton tile, int buttonPos) {
 		tile.setOnAction(e -> {
-			System.out.println(buttonPos);
+			//System.out.println(buttonPos);
 			if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {  // left
 				swapTile(tile, checkArray.get(buttonPos - 1));
 			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {  // right
@@ -193,14 +192,14 @@ public class JavaFXTemplate extends Application {
 		
 	}
 	private void swapTile(GameButton tile1, GameButton tile2) { 
-		System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		//System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		String temp = tile1.getText();
 		int tempNum = tile1.tileNum;
 		tile1.setText(tile2.getText());
 		tile1.tileNum = tile2.tileNum;
 		tile2.setText(temp);
 		tile2.tileNum = tempNum;
-		System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+		//System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		checkWin();
 	}
 	private void checkWin() {
