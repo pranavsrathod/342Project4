@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javafx.scene.paint.Color;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundSize;
@@ -72,6 +75,7 @@ public class JavaFXTemplate extends Application {
 	private int solving_array[] = {1,0,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
 //	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
+	ExecutorService ex;
 	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
 	//private GameButton checkArray[][] = new GameButton[4][4];
 	private GameButton empty, dummyButton;
@@ -85,6 +89,7 @@ public class JavaFXTemplate extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
+		ex = Executors.newFixedThreadPool(5);
 		dummyStage = primaryStage;
 		primaryStage.setTitle("Welcome to JavaFX");
 		Scene scene = new Scene(new VBox(), 700,700);
@@ -103,8 +108,8 @@ public class JavaFXTemplate extends Application {
 //		halt2.play();
 		primaryStage.show();
 		
-		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver();});
-		t.start();
+//		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver();});
+//		t.start();
 	}
 	
 	public Scene welcomeScene() {
@@ -136,6 +141,9 @@ public class JavaFXTemplate extends Application {
 		exit = new MenuItem("exit");
 		newPuzzle = new MenuItem("New Puzzle");
 		solution = new MenuItem("solution");
+		
+		AI_H1.setOnAction(e->heuristic1());
+		AI_H2.setOnAction(e->heuristic2());
 		// setting up menu items
 		options.getItems().addAll(newPuzzle, AI_H1, AI_H2, solution,exit);
 		// setting menu bar
@@ -144,11 +152,7 @@ public class JavaFXTemplate extends Application {
 		exit.setOnAction(e -> {
 			System.exit(0);
 		});
-		newPuzzle.setOnAction(e -> {
-			board = new GridPane();
-			SetConfigurations();
-			dummyStage.setScene(gameScene());
-		});
+		newPuzzle.setOnAction(e -> newGame());
 		BorderPane pane = new BorderPane();
 		pane.setCenter(board);
 		pane.setTop(menu);
@@ -158,7 +162,14 @@ public class JavaFXTemplate extends Application {
 		checkArray = new ArrayList<GameButton>();
 		Random randomNumber = new Random();
 		int index = randomNumber.nextInt(arrays.size() -1);
-		tempArr = arrays.get(index);
+		tempArr = new int[16];
+		// making a copy of the random array
+		int randomArray[] = arrays.get(index);
+		for(int i = 0; i < 16; i++) {
+			tempArr[i] = randomArray[i];
+			System.out.print(tempArr[i] + " ");
+		}
+		System.out.println();
 		int k = 0;
 //		int emptyRow, emptyCol;
 		for (int i = 0; i < 4; i++) {
@@ -176,6 +187,16 @@ public class JavaFXTemplate extends Application {
 		
 		
 	}
+	
+	public void heuristic1() {
+		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver(1, tempArr);});
+		t.start();
+	}
+	public void heuristic2() {
+		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver(2, tempArr);});
+		t.start();
+	}
+	
 	private void configure(GameButton tile, int buttonPos) {
 		tile.setOnAction(e -> {
 			//System.out.println(buttonPos);
@@ -199,8 +220,20 @@ public class JavaFXTemplate extends Application {
 		tile1.tileNum = tile2.tileNum;
 		tile2.setText(temp);
 		tile2.tileNum = tempNum;
+		int buttonPos1 = checkArray.indexOf(tile1);
+		int buttonPos2 = checkArray.indexOf(tile1);
+		
+		// swapping the elements in the current array 
+		int temp2 = tempArr[buttonPos1];
+		tempArr[buttonPos1] = tempArr[buttonPos2];
+		tempArr[buttonPos2] = temp2;
 		//System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		checkWin();
+	}
+	public void newGame() {
+		board = new GridPane();
+		SetConfigurations();
+		dummyStage.setScene(gameScene());
 	}
 	private void checkWin() {
 		boolean flag = true;
@@ -224,11 +257,7 @@ public class JavaFXTemplate extends Application {
 	public Scene winScene() {
 		Button b1 = new Button("New Game");
 		Button b2 = new Button("Exit");
-		b1.setOnAction(e -> {
-			board = new GridPane();
-			SetConfigurations();
-			dummyStage.setScene(gameScene());
-		});
+		b1.setOnAction(e -> newGame());
 		Label label = new Label("You Won!!");
 		label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
 		label.setStyle("-fx-bar-fill: white;");
