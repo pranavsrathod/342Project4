@@ -1,15 +1,9 @@
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.DisplayName;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class MyTest {
 	
@@ -24,6 +18,7 @@ class MyTest {
 	
 	@Test
 	void testNode() {
+		// testing if the Node is taking in the array
 		Node nodeObject = new Node (array1);
 		int array[] = nodeObject.getKey();
 		for (int i = 0; i < array1.length; i++) {
@@ -32,6 +27,7 @@ class MyTest {
 	}
 	@Test
 	void testNode2() {
+		// testing if the node returns a correct string
 		Node nodeObject = new Node (array1);
 		int array[] = nodeObject.getKey();
 		for (int i = 0; i < array1.length; i++) {
@@ -49,11 +45,27 @@ class MyTest {
 	
 	@Test
 	void testUserInterFace() {
+		// accepts a string and converts into a int array
 		UserInterface userObject = new UserInterface("0 14 13 12 15 9 5 8 11 7 4 1 3 10 6 2");
 		int array[] = userObject.getPuzzle();
 		for (int i = 0; i < array1.length; i++) {
 			assertEquals(array1[i], array[i]);
 		}
+	}
+	@Test
+	void testDBsolver() {
+		// finds solution path for heuristicOne and heuristicTwo
+		Node nodeObject = new Node (array1);
+		DB_Solver2 solver1 = new DB_Solver2(nodeObject, "heuristicOne");
+		Node solution1 = solver1.findSolutionPath();
+		ArrayList<Node> solutionPath1 = solver1.getSolutionPath(solution1);
+		assertEquals(191, solutionPath1.size());
+		DB_Solver2 solver2 = new DB_Solver2(nodeObject, "heuristicTwo");
+		Node solution2 = solver2.findSolutionPath();
+		ArrayList<Node> solutionPath2 = solver2.getSolutionPath(solution2);
+		assertEquals(235, solutionPath2.size());
+		
+
 	}
 	@Test
 	void testNode3() {
@@ -65,13 +77,13 @@ class MyTest {
 		assertEquals("[0, 14, 13, 12, 15, 9, 5, 8, 11, 7, 4, 1, 3, 10, 6, 2]", nodeObject.getKey2());
 		ArrayList<Node> solutionPath1 = aiObject1.getSolution();
 		for (int i = 0; i < solutionPath1.size(); i++) {
-			System.out.println(i + "+" + solutionPath1.get(i).get_hValue());
+			//System.out.println(i + "+" + solutionPath1.get(i).get_hValue());
 			assertEquals(0, solutionPath1.get(i).getDepth());
 		}
 	}
 	
 	@Test
-	void test1() {
+	void testAI1() {
 		// test the size of the array returned
 		ArrayList<Node> solutionPath1 = aiObject1.getSolution();
 		ArrayList<Node> solutionPath2 = aiObject2.getSolution();
@@ -80,7 +92,7 @@ class MyTest {
 	}
 	
 	@Test
-	void test2() {
+	void testAI2() {
 		// testing that the first Node of the array is in the same order as the initial Node of the array
 		ArrayList<Node> solutionPath1 = aiObject1.getSolution();
 		ArrayList<Node> solutionPath2 = aiObject2.getSolution();
@@ -98,7 +110,7 @@ class MyTest {
 	
 	
 	@Test
-	void test3() {
+	void testAI3() {
 		// When Running heuristicOne no other node other than the last one must have the array as {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
 		ArrayList<Node> solutionPath1 = aiObject1.getSolution();
 		assertEquals(191, solutionPath1.size());
@@ -118,7 +130,7 @@ class MyTest {
 	}
 	
 	@Test
-	void test4() {
+	void testAI4() {
 		// When Running heuristicTwo no other node other than the last one must have the array as {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
 		ArrayList<Node> solutionPath2 = aiObject2.getSolution();
 		assertEquals(235, solutionPath2.size());
@@ -136,7 +148,7 @@ class MyTest {
 		}
 	}
 	@Test
-	void test5() {
+	void testAI5() {
 		// testing that the last Node of the ArrayList is the goalState, which is {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}
 		ArrayList<Node> solutionPath1 = aiObject1.getSolution();
 		ArrayList<Node> solutionPath2 = aiObject2.getSolution();

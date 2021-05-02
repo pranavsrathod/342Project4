@@ -54,7 +54,6 @@ public class JavaFXTemplate extends Application {
 	private Image img;
 	private ImageView view;
 	private Stage dummyStage;
-	private int count = 0;
 	private int num = 0;
 	private int zeroIndex;
 	private boolean flag;
@@ -90,12 +89,12 @@ public class JavaFXTemplate extends Application {
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
 	// creating a new arrayList
 	ArrayList<Node> solutionPath = new ArrayList<Node>();
-	//	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
+
 	ExecutorService ex = Executors.newFixedThreadPool(10);
 	private ArrayList<GameButton> checkArray = new ArrayList<GameButton>();
 	//private GameButton checkArray[][] = new GameButton[4][4];
-	private GameButton empty, dummyButton;
-	private boolean emptyFlag = false;
+	//private GameButton empty, dummyButton;
+	//private boolean emptyFlag = false;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
@@ -108,7 +107,7 @@ public class JavaFXTemplate extends Application {
 		ex = Executors.newFixedThreadPool(5);
 		dummyStage = primaryStage;
 		primaryStage.setTitle("Welcome to JavaFX");
-		Scene scene = new Scene(new VBox(), 700,700);
+		//Scene scene = new Scene(new VBox(), 700,700);
 		primaryStage.setScene(welcomeScene());
 		PauseTransition halt = new PauseTransition(Duration.seconds(3));
 		halt.setOnFinished(e -> {
@@ -116,16 +115,8 @@ public class JavaFXTemplate extends Application {
 			dummyStage.show();
 		});
 		halt.play();
-//		PauseTransition halt2 = new PauseTransition(Duration.seconds(3));
-//		halt.setOnFinished(e -> {
-//			dummyStage.setScene(winScene());
-//			dummyStage.show();
-//		});
-//		halt2.play();
 		primaryStage.show();
 		
-//		Thread t = new Thread(()-> {A_IDS_A_15solver ids = new A_IDS_A_15solver();});
-//		t.start();
 	}
 	
 	// Start Scene
@@ -145,16 +136,16 @@ public class JavaFXTemplate extends Application {
 	// Gamescene
 	public Scene gameScene() {
 //		 Grid Pane
-		AI_H1 = new Button("AI_H1");
-		AI_H2 = new Button("AI_H2");
-		solution = new Button("Solution");
+		AI_H1 = new Button("AI H1");
+		AI_H2 = new Button("AI H2");
+		solution = new Button("See the Solution");
 		solution.setDisable(true);
 		AI_H1.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
 		AI_H2.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
 		solution.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
-		AI_H1.setPrefWidth(100);
-		AI_H2.setPrefWidth(100);
-		solution.setPrefWidth(100);
+		AI_H1.setPrefWidth(70);
+		AI_H2.setPrefWidth(70);
+		//solution.setPrefWidth(100);
 		AI_H1.setPrefHeight(30);
 		AI_H2.setPrefHeight(30);
 		solution.setPrefHeight(30);
@@ -165,8 +156,8 @@ public class JavaFXTemplate extends Application {
 		board.setAlignment(Pos.CENTER);
 		// VBox
 //		VBox vBox = new VBox(100, AI_H1, AI_H2);
-		HBox hBox = new HBox(63, AI_H1, AI_H2, solution);
-		VBox vBox = new VBox(5, hBox, board);
+		HBox hBox = new HBox(50, AI_H1, AI_H2, solution);
+		VBox vBox = new VBox(15, hBox, board);
 		vBox.setAlignment(Pos.CENTER);
 		// HBox
 //		HBox hBox = new HBox(5, vBox, board, solution);
@@ -196,7 +187,7 @@ public class JavaFXTemplate extends Application {
 		      dialog.setTitle("How To Play");
 		      ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
 		      dialog.setContentText("1.This is a 15 puzzle game.\n"
-		      		+ "2.You have 15 numbered buttons and a blank button that represents zero.\n"
+		      		+ "2.You have 15 numbered tile and a blank tiles that represents zero. Click the number next to a blank tile to swap.\n"
 		      		+ "3.There is additional two heuristic buttons that provide you with a minimum of 10 steps in total at one time.\n"
 		      		+ "4.Once a heuristic button is clicked the solution button is enabled.\n"
 		      		+ "5.Pressing the solution button is going to graphically switch the buttons to get the user to the closest solution.\n"
@@ -250,7 +241,7 @@ public class JavaFXTemplate extends Application {
 					checkArray.add(box);  // adding buttons to the ArrayList
 			}
 		}
-		// iterating through the ArrayList and checking if the buttons are to be swapped
+		// iterating through the ArrayList and assigning event handlers and colors to the buttons
 		for (int i = 0; i < 16; i++) {
 			configure(checkArray.get(i), i);
 			setTileColor(checkArray.get(i), i);
@@ -277,9 +268,6 @@ public class JavaFXTemplate extends Application {
 		Thread t = new Thread(()-> {
 			board.setDisable(true);
 			Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, hNum, hType));
-//			Future<ArrayList<Node>> future = ex.submit(() -> {
-//				Platform.runLater(()-> {MyCall(tempArr, hNum, hType);)
-//			});
 			ex.submit(() -> {
 				try {
 					solutionPath = future.get();
@@ -342,13 +330,12 @@ public class JavaFXTemplate extends Application {
 		tempArr[buttonPos1] = tempArr[buttonPos2];
 		tempArr[buttonPos2] = temp2;
 //		System.out.println("After Swapping " + tempArr[] + " with " + tile2.tileNum);
-		System.out.println(Arrays.toString(tempArr));
+//		System.out.println(Arrays.toString(tempArr));
 		if (tempArr[buttonPos1] == 0) {
 			zeroIndex = buttonPos1;
 		} else {
 			zeroIndex = buttonPos2;
 		}
-//		heuristic1(tempArr);
 		setTileColor(tile1, buttonPos1);
 		setTileColor(tile2, buttonPos2);
 		checkWin();
@@ -378,7 +365,6 @@ public class JavaFXTemplate extends Application {
 			PauseTransition halt = new PauseTransition(Duration.seconds(2.5));
 			halt.setOnFinished(e -> {
 				dummyStage.setScene(winScene());
-//				dummyStage.show();
 			});
 			halt.play();
 		}
@@ -431,8 +417,6 @@ public class JavaFXTemplate extends Application {
 		halt2.setOnFinished(e -> {
 			if (count.get() <= 10) {
 				if (count.get() < solutionPath.size()) {
-					//System.out.println(count.get() + " " + count.getAndIncrement());
-				//	System.out.println("ENTERING SWAPPING");
 					printState(solutionPath.get(count.getAndIncrement()));
 				}
 				halt2.play();
