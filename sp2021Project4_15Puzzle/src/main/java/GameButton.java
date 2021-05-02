@@ -18,4 +18,5 @@ public class GameButton extends Button{
 		}
 		this.setPrefSize(80,80);
 	}
+	
 }

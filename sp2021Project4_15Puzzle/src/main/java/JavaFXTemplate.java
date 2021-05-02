@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.paint.Color;
 import javafx.scene.layout.BackgroundFill;
@@ -53,6 +54,7 @@ public class JavaFXTemplate extends Application {
 	private Stage dummyStage;
 	private int count = 0;
 	private int num = 0;
+	private boolean flag;
 	private GridPane board;
 	private MenuBar menu;
 	private MenuItem AI_H1;
@@ -162,6 +164,9 @@ public class JavaFXTemplate extends Application {
 				e1.printStackTrace();
 			}
 		});
+		solution.setOnAction(e -> {
+			Graphics();
+		});
 		// setting up menu items
 		options.getItems().addAll(newPuzzle, AI_H1, AI_H2, solution,exit);
 		// setting menu bar
@@ -182,7 +187,8 @@ public class JavaFXTemplate extends Application {
 		int index = randomNumber.nextInt(arrays.size() -1);
 		tempArr = new int[16];
 		// making a copy of the random array
-		int randomArray[] = arrays.get(index);
+//		int randomArray[] = arrays.get(index);
+		int randomArray[] = testArray;
 		for(int i = 0; i < 16; i++) {
 			tempArr[i] = randomArray[i];
 			System.out.print(tempArr[i] + " ");
@@ -207,7 +213,7 @@ public class JavaFXTemplate extends Application {
 	}
 	
 	public void heuristic1() throws InterruptedException, ExecutionException {
-		Future<ArrayList<Node>> future = ex.submit(new MyCall(testArray, 1, "heuristicOne"));
+		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 1, "heuristicOne"));
 		ex.submit(() -> {
 			try {
 				solutionPath.addAll(future.get());
@@ -219,7 +225,7 @@ public class JavaFXTemplate extends Application {
 		
 	}
 	public void heuristic2() throws InterruptedException, ExecutionException {
-		Future<ArrayList<Node>> future = ex.submit(new MyCall(testArray, 2, "heuristicTwo"));
+		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 2, "heuristicTwo"));
 		solutionPath.addAll(future.get());
 	}
 	
@@ -247,13 +253,15 @@ public class JavaFXTemplate extends Application {
 		tile2.setText(temp);
 		tile2.tileNum = tempNum;
 		int buttonPos1 = checkArray.indexOf(tile1);
-		int buttonPos2 = checkArray.indexOf(tile1);
+		int buttonPos2 = checkArray.indexOf(tile2);
 		
 		// swapping the elements in the current array 
 		int temp2 = tempArr[buttonPos1];
 		tempArr[buttonPos1] = tempArr[buttonPos2];
 		tempArr[buttonPos2] = temp2;
-		//System.out.println("After Swapping " + tile1.tileNum + " with " + tile2.tileNum);
+//		System.out.println("After Swapping " + tempArr[] + " with " + tile2.tileNum);
+		System.out.println(Arrays.toString(tempArr));
+//		heuristic1(tempArr);
 		checkWin();
 	}
 	public void newGame() {
@@ -262,7 +270,7 @@ public class JavaFXTemplate extends Application {
 		dummyStage.setScene(gameScene());
 	}
 	private void checkWin() {
-		boolean flag = true;
+		flag = true;
 		for (int i = 0; i < 16; i++) {
 			int var = checkArray.get(i).tileNum;
 			if (var != i) {
@@ -299,7 +307,33 @@ public class JavaFXTemplate extends Application {
 		borderPane.setCenter(vBox);
 		return new Scene(borderPane, 400, 400);
 	}
-
+	public void printState(Node node){
+		
+		int[] puzzleArray = node.getKey();
+		for(int i =0; i< puzzleArray.length; i++){
+			
+		}
+	
+	}
+	public void Graphics() {
+		PauseTransition halt2 = new PauseTransition(Duration.seconds(1));
+		AtomicInteger count = new AtomicInteger(1);
+		halt2.setOnFinished(e -> {
+			if(flag) {
+				checkWin();
+			} else if (count.get() <= 10) {
+				printState(solutionPath.get(count.get()));
+				count.set(count.get()+1);
+			} else {
+				;
+//				AI_H1.setDisable(emptyFlag);
+			}
+		});
+		halt2.play();
+	}
+//	public int[] getTempArr() {
+//		return tempArr;
+//	}
 	
 }
 
