@@ -64,7 +64,6 @@ public class JavaFXTemplate extends Application {
 	private Button AI_H2;
 	private Button solution;
 	private MenuItem howToPlay;
-	//private MenuItem AI_H2;
 	private MenuItem exit;
 	//private MenuItem solution;
 	private MenuItem newPuzzle;
@@ -72,19 +71,24 @@ public class JavaFXTemplate extends Application {
 	private int column = 0;
 	private int row = 0;
 	private int tempArr[];
-	private int array1[] = {9, 5, 7, 3, 13, 1, 2, 6, 14, 10, 4, 11, 0, 15, 8, 12};
-	private int array2[] = {7, 6, 9, 4, 1, 5, 2, 3, 13, 10, 12, 15, 0, 8, 11, 14};
-	private int array3[] = {5, 13, 4, 6, 2, 11, 12, 3, 1, 10, 0, 7, 9, 14, 15, 8};
-	private int array4[] = {1, 6, 7, 0, 5, 3, 8, 4, 13, 2, 9, 12, 10, 14, 11, 15};
-	private int array5[] = {1, 6, 7, 0, 5, 3, 8, 4, 13, 2, 9, 12, 10, 14, 11, 15};
-	private int array6[] = {9, 1, 0, 7, 2, 14, 5, 3, 15, 12, 11, 10, 12, 8, 6, 4};
-	private int array7[] = {1, 5, 4, 3, 7, 14, 15, 2, 13, 6, 8, 11, 9, 10, 0, 12};
-	private int array8[] = {3, 1, 12, 6, 2, 8, 4, 14, 5, 15, 11, 0, 9, 13, 10, 7};
-	private int array9[] = {1, 3, 7, 0, 11, 2, 8, 4, 10, 5, 14, 12, 9, 6, 13, 15};
-	private int array10[] = {5, 1, 4, 8, 10, 6, 0, 3, 15, 7, 9, 11, 14, 2, 13, 12};
+	// All the puzzles stored in arrays
+	private int array1[] = {14, 9, 13, 12, 15, 5, 4, 8, 11, 0, 7, 1, 3, 10, 6, 2};
+	private int array2[] = {15, 0, 14, 12, 9, 7, 13, 1, 11, 6, 8, 5, 3, 4, 10, 2};
+	private int array3[] = {15, 13, 8, 4, 9, 5, 0, 12, 11, 7, 10, 1, 3, 6, 14, 2};
+	private int array4[] = {0, 13, 5, 12, 9, 11, 7, 1, 4, 14, 8, 2, 3, 10, 15, 6};
+	private int array5[] = {13, 7, 5, 12, 9, 0, 14, 8, 11, 15, 4, 1, 3, 10, 6, 2};
+	private int array6[] = {7, 0, 4, 12, 5, 13, 9, 8, 14, 11, 15, 1, 3, 10, 6, 2};
+	private int array7[] = {1, 6, 12, 5, 14, 13, 0, 15, 11, 4, 9, 8, 3, 10, 7, 2};
+	private int array8[] = {9, 15, 13, 12, 7, 6, 0, 5, 10, 3, 4, 8, 11, 14, 2, 1};
+	private int array9[] = {11, 5, 7, 12, 0, 4, 9, 8, 13, 3, 14, 1, 10, 15, 6, 2};
+	private int array10[] = {7, 10, 0, 8, 5, 4, 15, 14, 9, 13, 12, 2, 3, 6, 1, 11};
+	// testing array
 	private int solving_array[] = {1,0,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	// Prof.HallenBeck's array
 	private int testArray[] = {0, 14, 13, 12, 15, 9, 5, 8, 11, 7, 4, 1, 3, 10, 6, 2};
+	// ArrayList of arrays
 	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, array2, array3, array4, array5, array6, array7, array8, array9, array10));
+	// creating a new arrayList
 	ArrayList<Node> solutionPath = new ArrayList<Node>();
 	//	private ArrayList<int[]> arrays = new ArrayList<int[]>(Arrays.asList(array1, solving_array));
 	ExecutorService ex = Executors.newFixedThreadPool(10);
@@ -124,6 +128,7 @@ public class JavaFXTemplate extends Application {
 //		t.start();
 	}
 	
+	// Start Scene
 	public Scene welcomeScene() {
 		Label label = new Label("Welcome to 15 PUZZEL");
 		label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
@@ -136,6 +141,8 @@ public class JavaFXTemplate extends Application {
 		borderPane.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, bSize)));
 		return new Scene(borderPane, 400, 400);
 	}
+	
+	// Gamescene
 	public Scene gameScene() {
 //		 Grid Pane
 		AI_H1 = new Button("AI_H1");
@@ -152,8 +159,8 @@ public class JavaFXTemplate extends Application {
 		AI_H2.setPrefHeight(30);
 		solution.setPrefHeight(30);
 		board = new GridPane();
-		board.setVgap(10);
-		board.setHgap(10);
+		board.setVgap(20);
+		board.setHgap(20);
 		SetConfigurations();
 		board.setAlignment(Pos.CENTER);
 		// VBox
@@ -202,47 +209,48 @@ public class JavaFXTemplate extends Application {
 		options.getItems().addAll(newPuzzle,howToPlay,exit);
 		// setting menu bar
 		menu.getMenus().addAll(options);
-		menu.setStyle("-fx-background-color: white");
+//		menu.setStyle("-fx-background-color: white");
 		exit.setOnAction(e -> {
 			ex.shutdown();
 			System.exit(0);
 		});
 		newPuzzle.setOnAction(e -> newGame());
+		Image image = new Image("GUI_background.gif");
+		BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
 		BorderPane pane = new BorderPane();
 		pane.setCenter(vBox);
 		pane.setTop(menu);
-		pane.setStyle("-fx-background-color: Orange");
+		pane.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, bSize)));
 		return new Scene(pane, 500, 500);
 	}
+	// Building the gridPane
 	public void SetConfigurations() {
 		checkArray = new ArrayList<GameButton>();
 		Random randomNumber = new Random();
 		int index = randomNumber.nextInt(arrays.size() -1);
 		tempArr = new int[16];
 		// making a copy of the random array
-//		int randomArray[] = arrays.get(index);
-		int randomArray[] = testArray;
-//		int randomArray[] = array10;
+		int randomArray[] = arrays.get(index);
+		// Copying the elements into the tempArr array
 		for(int i = 0; i < 16; i++) {
 			tempArr[i] = randomArray[i];
 			System.out.print(tempArr[i] + " ");
 		}
 		System.out.println();
 		int k = 0;
-//		int emptyRow, emptyCol;
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 					GameButton box = new GameButton(tempArr[k]);
-					//System.out.println("STYLE " + box.getStyle());
 					num = tempArr[k];
 					if (tempArr[k] == 0) {
 						zeroIndex = k;
 					}
 					k++;
-					board.add(box, j, i);
-					checkArray.add(box);
+					board.add(box, j, i);  // adding buttons to the gridPane
+					checkArray.add(box);  // adding buttons to the ArrayList
 			}
 		}
+		// iterating through the ArrayList and checking if the buttons are to be swapped
 		for (int i = 0; i < 16; i++) {
 			configure(checkArray.get(i), i);
 			setTileColor(checkArray.get(i), i);
@@ -250,16 +258,22 @@ public class JavaFXTemplate extends Application {
 		
 		
 	}
+	
+	// Setting the style of buttons in the gridPane
 	public void setTileColor(GameButton tile, int index) {
 		if (tile.tileNum == index) {
-			tile.setStyle("-fx-background-color: Yellow");
+			// For the right position of a button
+			tile.setStyle("-fx-background-color: pink");
 		} else {
 			tile.setStyle ("-fx-background-color: White;");
 		}
 	}
 	
+	// AI algorithm function
 	public void heuristic(String hType, int hNum){
 		solutionPath = new ArrayList<Node>();
+		// The heuristic algorithm will work on it's own thread to avoid
+		// blocking the application thread.
 		Thread t = new Thread(()-> {
 			board.setDisable(true);
 			Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, hNum, hType));
@@ -281,6 +295,7 @@ public class JavaFXTemplate extends Application {
 
 	}
 	
+	// Function for swapping conditions
 	private void configure(GameButton tile, int buttonPos) {
 		tile.setOnAction(e -> {
 			//System.out.println(buttonPos);
@@ -309,6 +324,8 @@ public class JavaFXTemplate extends Application {
 		});
 		
 	}
+	
+	// Swap function
 	private void swapTile(GameButton tile1, GameButton tile2) { 
 		//System.out.println("Swapping " + tile1.tileNum + " with " + tile2.tileNum);
 		String temp = tile1.getText();
@@ -336,14 +353,19 @@ public class JavaFXTemplate extends Application {
 		setTileColor(tile2, buttonPos2);
 		checkWin();
 	}
+	
+	// Restart function
 	public void newGame() {
 //		solution.setDisable()
 		board = new GridPane();
 		SetConfigurations();
 		dummyStage.setScene(gameScene());
 	}
+	
+	// Check if all buttons are in order function
 	private void checkWin() {
 		flag = true;
+		
 		for (int i = 0; i < 16; i++) {
 			int var = checkArray.get(i).tileNum;
 			if (var != i) {
@@ -353,7 +375,7 @@ public class JavaFXTemplate extends Application {
 		}
 		if (flag) {
 			System.out.println("WON!!");
-			PauseTransition halt = new PauseTransition(Duration.seconds(3));
+			PauseTransition halt = new PauseTransition(Duration.seconds(2.5));
 			halt.setOnFinished(e -> {
 				dummyStage.setScene(winScene());
 //				dummyStage.show();
@@ -361,6 +383,8 @@ public class JavaFXTemplate extends Application {
 			halt.play();
 		}
 	}
+	
+	// Switch to a congratulating window/scene
 	public Scene winScene() {
 		Button b1 = new Button("New Game");
 		Button b2 = new Button("Exit");
@@ -384,6 +408,7 @@ public class JavaFXTemplate extends Application {
 		borderPane.setCenter(vBox);
 		return new Scene(borderPane, 400, 400);
 	}
+	// Graphically switches the buttons in the gameScene
 	public void printState(Node node){
 		
 		int[] puzzleArray = node.getKey();
@@ -397,6 +422,7 @@ public class JavaFXTemplate extends Application {
 		swapTile(checkArray.get(zeroIndex), checkArray.get(zeroAt));
 	
 	}
+	// Function for switching positions only upto 10 moves in a row
 	public void Graphics() {
 		AtomicInteger count = new AtomicInteger(1);
 //		while(count.get() <= 10) {
