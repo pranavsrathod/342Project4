@@ -152,15 +152,18 @@ public class JavaFXTemplate extends Application {
 		AI_H2.setPrefHeight(30);
 		solution.setPrefHeight(30);
 		board = new GridPane();
-		board.setVgap(5);
-		board.setHgap(5);
+		board.setVgap(10);
+		board.setHgap(10);
 		SetConfigurations();
 		board.setAlignment(Pos.CENTER);
 		// VBox
-		VBox vBox = new VBox(100, AI_H1, AI_H2);
+//		VBox vBox = new VBox(100, AI_H1, AI_H2);
+		HBox hBox = new HBox(63, AI_H1, AI_H2, solution);
+		VBox vBox = new VBox(5, hBox, board);
 		vBox.setAlignment(Pos.CENTER);
 		// HBox
-		HBox hBox = new HBox(5, vBox, board, solution);
+//		HBox hBox = new HBox(5, vBox, board, solution);
+		
 		hBox.setAlignment(Pos.CENTER);
 		// Menu Bar
 		menu = new MenuBar();
@@ -168,24 +171,11 @@ public class JavaFXTemplate extends Application {
 		howToPlay = new MenuItem("How To Play");
 		exit = new MenuItem("exit");
 		newPuzzle = new MenuItem("New Puzzle");
-//		solution = new MenuItem("solution");
+
 		
-		AI_H1.setOnAction(e->{
-//			try {
-				heuristic2("heuristicOne",1);
-//			} catch (InterruptedException | ExecutionException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-		});
-		AI_H2.setOnAction(e->{
-//			try {
-				heuristic2("heuristicTwo",2);
-//			} catch (InterruptedException | ExecutionException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-		});
+		AI_H1.setOnAction(e-> heuristic("heuristicOne",1));
+		AI_H2.setOnAction(e->heuristic("heuristicTwo",2));
+		
 		solution.setOnAction(e -> {
 			newPuzzle.setDisable(true);
 			solution.setDisable(true);
@@ -219,9 +209,9 @@ public class JavaFXTemplate extends Application {
 		});
 		newPuzzle.setOnAction(e -> newGame());
 		BorderPane pane = new BorderPane();
-		pane.setCenter(hBox);
+		pane.setCenter(vBox);
 		pane.setTop(menu);
-		pane.setStyle("-fx-background-color: Red");
+		pane.setStyle("-fx-background-color: Orange");
 		return new Scene(pane, 500, 500);
 	}
 	public void SetConfigurations() {
@@ -262,27 +252,13 @@ public class JavaFXTemplate extends Application {
 	}
 	public void setTileColor(GameButton tile, int index) {
 		if (tile.tileNum == index) {
-			tile.setStyle("-fx-background-color: Blue");
+			tile.setStyle("-fx-background-color: Yellow");
 		} else {
 			tile.setStyle ("-fx-background-color: White;");
 		}
 	}
 	
-//	public void heuristic1() throws InterruptedException, ExecutionException {
-//		solutionPath = new ArrayList<Node>();
-//		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 1, "heuristicOne"));
-//		ex.submit(() -> {
-//			try {
-//				solutionPath.addAll(future.get());
-//				solution.setDisable(false);
-//			} catch (InterruptedException | ExecutionException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		});
-//		
-//	}
-	public void heuristic2(String hType, int hNum){
+	public void heuristic(String hType, int hNum){
 		solutionPath = new ArrayList<Node>();
 		Thread t = new Thread(()-> {
 			board.setDisable(true);
@@ -302,19 +278,7 @@ public class JavaFXTemplate extends Application {
 			});
 		});
 		t.start();
-//		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, hNum, hType));
-////		Future<ArrayList<Node>> future = ex.submit(() -> {
-////			Platform.runLater(()-> {MyCall(tempArr, hNum, hType);)
-////		});
-//		ex.submit(() -> {
-//			try {
-//				solutionPath = future.get();
-//				solution.setDisable(false);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		});
+
 	}
 	
 	private void configure(GameButton tile, int buttonPos) {

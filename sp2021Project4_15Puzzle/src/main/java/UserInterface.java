@@ -9,9 +9,9 @@ public class UserInterface {
 
 int[] puzzle;
 	
-	public UserInterface(){
+	public UserInterface(String array){
 		
-		readInString();		//reads in the string from the user
+		readInString(array);		//reads in the string from the user
 		
 		System.out.print("\nThis is the puzzle you entered\n");
 		
@@ -21,19 +21,19 @@ int[] puzzle;
 	/**
 	 * Function reads in the string from the user and stores it as an int array
 	 */
-	public void readInString(){
+	public void readInString(String array){
 		
-		String puzzleEntered;
+		String puzzleEntered = array;
 	
 		System.out.println("Enter in your puzzle as a string with a space between each number");
 		
-		Scanner userInput = new Scanner(System.in);		//open scanner
-		
-		puzzleEntered = userInput.nextLine();					//scan in string
+//		Scanner userInput = new Scanner(System.in);		//open scanner
+//		
+//		puzzleEntered = userInput.nextLine();					//scan in string
 		
 		puzzle = stringToIntArray(puzzleEntered);
 		
-		userInput.close();   	  						//close scanner
+//		userInput.close();   	  						//close scanner
 	}
 	
 	/**

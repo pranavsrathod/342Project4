@@ -17,7 +17,7 @@ public class GameButton extends Button{
 		} else {
 			this.setText(Integer.toString(number));
 		}
-		this.setPrefSize(80,80);
+		this.setPrefSize(100,100);
 	}
 	
 }
