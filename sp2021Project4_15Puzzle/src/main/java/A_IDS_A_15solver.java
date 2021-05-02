@@ -107,6 +107,7 @@ public A_IDS_A_15solver(int aiType, int array[]){
 		}
 	
 	}
+	// getter method for solution path
 	public ArrayList<Node> getSolution() {
 		return solutionPath;
 	}
