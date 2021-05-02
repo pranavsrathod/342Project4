@@ -58,10 +58,13 @@ public class JavaFXTemplate extends Application {
 	private boolean flag;
 	private GridPane board;
 	private MenuBar menu;
-	private MenuItem AI_H1;
-	private MenuItem AI_H2;
+	private Button AI_H1;
+	private Button AI_H2;
+	private Button solution;
+	private MenuItem howToPlay;
+	//private MenuItem AI_H2;
 	private MenuItem exit;
-	private MenuItem solution;
+	//private MenuItem solution;
 	private MenuItem newPuzzle;
 	private Menu options;
 	private int column = 0;
@@ -133,21 +136,39 @@ public class JavaFXTemplate extends Application {
 	}
 	public Scene gameScene() {
 //		 Grid Pane
-		
+		AI_H1 = new Button("AI_H1");
+		AI_H2 = new Button("AI_H2");
+		solution = new Button("Solution");
+		solution.setDisable(true);
+		AI_H1.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		AI_H2.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		solution.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12));
+		AI_H1.setPrefWidth(100);
+		AI_H2.setPrefWidth(100);
+		solution.setPrefWidth(100);
+		AI_H1.setPrefHeight(30);
+		AI_H2.setPrefHeight(30);
+		solution.setPrefHeight(30);
 		board = new GridPane();
-		board.setVgap(10);
-		board.setHgap(10);
+		board.setVgap(5);
+		board.setHgap(5);
 		SetConfigurations();
-		board.setStyle("-fx-background-color: #00FFFF");
 		board.setAlignment(Pos.CENTER);
+		// VBox
+		VBox vBox = new VBox(100, AI_H1, AI_H2);
+		vBox.setAlignment(Pos.CENTER);
+		// HBox
+		HBox hBox = new HBox(5, vBox, board, solution);
+		hBox.setAlignment(Pos.CENTER);
 		// Menu Bar
 		menu = new MenuBar();
 		options = new Menu("options");
-		AI_H1 = new MenuItem("AI_H1");
-		AI_H2 = new MenuItem("AI_H2");
+		howToPlay = new MenuItem("How To Play");
+//		AI_H1 = new MenuItem("AI_H1");
+//		AI_H2 = new MenuItem("AI_H2");
 		exit = new MenuItem("exit");
 		newPuzzle = new MenuItem("New Puzzle");
-		solution = new MenuItem("solution");
+//		solution = new MenuItem("solution");
 		
 		AI_H1.setOnAction(e->{
 			try {
@@ -166,10 +187,29 @@ public class JavaFXTemplate extends Application {
 			}
 		});
 		solution.setOnAction(e -> {
+			newPuzzle.setDisable(true);
+			solution.setDisable(true);
+			board.setDisable(true);
+			AI_H1.setDisable(true);
+			AI_H2.setDisable(true);
 			Graphics();
 		});
+		howToPlay.setOnAction(e -> {
+		      Dialog<String> dialog = new Dialog<String>();
+		      dialog.setTitle("How To Play");
+		      ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
+		      dialog.setContentText("1.This is a 15 puzzle game.\n"
+		      		+ "2.You have 15 numbered buttons and a blank button that represents zero.\n"
+		      		+ "3.There is additional two heuristic buttons that provide you with a minimum of 10 steps in total at one time.\n"
+		      		+ "4.Once a heuristic button is clicked the solution button is enabled.\n"
+		      		+ "5.Pressing the solution button is going to graphically switch the buttons to get the user to the closest solution.\n"
+		      		+ "6.You could also play the game manually and win via arranging all the button elements in an ascending order.\n"
+		      		+ "7.Enjoy!!!!!!!!!");
+		      dialog.getDialogPane().getButtonTypes().add(type);
+		      dialog.showAndWait();
+		});
 		// setting up menu items
-		options.getItems().addAll(newPuzzle, AI_H1, AI_H2, solution,exit);
+		options.getItems().addAll(newPuzzle,howToPlay,exit);
 		// setting menu bar
 		menu.getMenus().addAll(options);
 		menu.setStyle("-fx-background-color: white");
@@ -178,9 +218,10 @@ public class JavaFXTemplate extends Application {
 		});
 		newPuzzle.setOnAction(e -> newGame());
 		BorderPane pane = new BorderPane();
-		pane.setCenter(board);
+		pane.setCenter(hBox);
 		pane.setTop(menu);
-		return new Scene(pane, 400, 400);
+		pane.setStyle("-fx-background-color: Red");
+		return new Scene(pane, 500, 500);
 	}
 	public void SetConfigurations() {
 		checkArray = new ArrayList<GameButton>();
@@ -189,7 +230,7 @@ public class JavaFXTemplate extends Application {
 		tempArr = new int[16];
 		// making a copy of the random array
 //		int randomArray[] = arrays.get(index);
-		int randomArray[] = solving_array;
+		int randomArray[] = testArray;
 		for(int i = 0; i < 16; i++) {
 			tempArr[i] = randomArray[i];
 			System.out.print(tempArr[i] + " ");
@@ -222,6 +263,7 @@ public class JavaFXTemplate extends Application {
 		ex.submit(() -> {
 			try {
 				solutionPath.addAll(future.get());
+				solution.setDisable(false);
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -230,8 +272,17 @@ public class JavaFXTemplate extends Application {
 		
 	}
 	public void heuristic2() throws InterruptedException, ExecutionException {
+		solutionPath = new ArrayList<Node>();
 		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 2, "heuristicTwo"));
-		solutionPath.addAll(future.get());
+		ex.submit(() -> {
+			try {
+				solutionPath.addAll(future.get());
+				solution.setDisable(false);
+			} catch (InterruptedException | ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	private void configure(GameButton tile, int buttonPos) {
@@ -275,6 +326,7 @@ public class JavaFXTemplate extends Application {
 		checkWin();
 	}
 	public void newGame() {
+//		solution.setDisable()
 		board = new GridPane();
 		SetConfigurations();
 		dummyStage.setScene(gameScene());
@@ -345,7 +397,11 @@ public class JavaFXTemplate extends Application {
 				count.set(count.get()+1);
 				halt2.play();
 			} else {
-				
+				solution.setDisable(true);
+				board.setDisable(false);
+				AI_H1.setDisable(false);
+				AI_H2.setDisable(false);
+				newPuzzle.setDisable(false);
 			}
 		});
 		
