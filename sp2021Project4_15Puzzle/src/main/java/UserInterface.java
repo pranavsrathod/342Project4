@@ -8,10 +8,19 @@ import java.util.Scanner;
 public class UserInterface {
 
 int[] puzzle;
+	public UserInterface(){
+		
+		readInString();		//reads in the string from the user
+		
+		System.out.print("\nThis is the puzzle you entered\n");
+		
+		printArray();
+	}
 	
+	// parameterizedConstructor
 	public UserInterface(String array){
 		
-		readInString(array);		//reads in the string from the user
+		readInString(array);
 		
 		System.out.print("\nThis is the puzzle you entered\n");
 		
@@ -21,6 +30,23 @@ int[] puzzle;
 	/**
 	 * Function reads in the string from the user and stores it as an int array
 	 */
+		public void readInString(){
+		
+		String puzzleEntered;
+	
+		System.out.println("Enter in your puzzle as a string with a space between each number");
+		
+		Scanner userInput = new Scanner(System.in);		//open scanner
+//		
+		puzzleEntered = userInput.nextLine();					//scan in string
+		
+		puzzle = stringToIntArray(puzzleEntered);
+		
+		userInput.close();   	  						//close scanner
+	}
+		/**
+		 * Function accepts a string and stores it as an int array
+		 */
 	public void readInString(String array){
 		
 		String puzzleEntered = array;
