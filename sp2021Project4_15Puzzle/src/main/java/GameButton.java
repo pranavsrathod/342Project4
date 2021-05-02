@@ -10,6 +10,7 @@ public class GameButton extends Button{
 	GameButton(int number){
 		// setting the default instances of the button
 		super("");
+		this.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		tileNum = number;
 		if (number == 0) {
 			this.setText("");

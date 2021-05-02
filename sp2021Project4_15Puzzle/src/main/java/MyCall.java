@@ -18,7 +18,7 @@ class MyCall implements Callable<ArrayList<Node>> {
 		// TODO Auto-generated method stub
 		//Node newNode = new Node(puzzleArray);
 		ArrayList<Node> solutionList = new ArrayList<Node>();
-		solutionList.addAll(object.getSolution());
+		solutionList = object.getSolution();
 //			solutionList = object.getSolution();
 		return solutionList;
 	}

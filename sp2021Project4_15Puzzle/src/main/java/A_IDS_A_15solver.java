@@ -67,7 +67,7 @@ public A_IDS_A_15solver(int aiType, int array[]){
 		{
 			solutionPath = start_A_Star.getSolutionPath(solution);	//creates ArrayList of solution path
 			
-			printSolution(solutionPath);
+			// printSolution(solutionPath);
 			
 			return solutionPath;
 			

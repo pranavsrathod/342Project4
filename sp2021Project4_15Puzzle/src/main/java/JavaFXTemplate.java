@@ -54,6 +54,7 @@ public class JavaFXTemplate extends Application {
 	private Stage dummyStage;
 	private int count = 0;
 	private int num = 0;
+	private int zeroIndex;
 	private boolean flag;
 	private GridPane board;
 	private MenuBar menu;
@@ -188,7 +189,7 @@ public class JavaFXTemplate extends Application {
 		tempArr = new int[16];
 		// making a copy of the random array
 //		int randomArray[] = arrays.get(index);
-		int randomArray[] = testArray;
+		int randomArray[] = solving_array;
 		for(int i = 0; i < 16; i++) {
 			tempArr[i] = randomArray[i];
 			System.out.print(tempArr[i] + " ");
@@ -200,6 +201,9 @@ public class JavaFXTemplate extends Application {
 			for (int j = 0; j < 4; j++) {
 					GameButton box = new GameButton(tempArr[k]);
 					num = tempArr[k];
+					if (tempArr[k] == 0) {
+						zeroIndex = k;
+					}
 					k++;
 					board.add(box, j, i);
 					checkArray.add(box);
@@ -213,6 +217,7 @@ public class JavaFXTemplate extends Application {
 	}
 	
 	public void heuristic1() throws InterruptedException, ExecutionException {
+		solutionPath = new ArrayList<Node>();
 		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 1, "heuristicOne"));
 		ex.submit(() -> {
 			try {
@@ -261,6 +266,11 @@ public class JavaFXTemplate extends Application {
 		tempArr[buttonPos2] = temp2;
 //		System.out.println("After Swapping " + tempArr[] + " with " + tile2.tileNum);
 		System.out.println(Arrays.toString(tempArr));
+		if (tempArr[buttonPos1] == 0) {
+			zeroIndex = buttonPos1;
+		} else {
+			zeroIndex = buttonPos2;
+		}
 //		heuristic1(tempArr);
 		checkWin();
 	}
@@ -292,6 +302,7 @@ public class JavaFXTemplate extends Application {
 		Button b1 = new Button("New Game");
 		Button b2 = new Button("Exit");
 		b1.setOnAction(e -> newGame());
+		b2.setOnAction(e-> System.exit(0));
 		Label label = new Label("You Won!!");
 		label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
 		label.setStyle("-fx-bar-fill: white;");
@@ -310,26 +321,34 @@ public class JavaFXTemplate extends Application {
 	public void printState(Node node){
 		
 		int[] puzzleArray = node.getKey();
+		int zeroAt = 0;
 		for(int i =0; i< puzzleArray.length; i++){
-			
+			if (puzzleArray[i]==0) {
+				zeroAt = i;
+				break;
+			}
 		}
+		swapTile(checkArray.get(zeroIndex), checkArray.get(zeroAt));
 	
 	}
 	public void Graphics() {
-		PauseTransition halt2 = new PauseTransition(Duration.seconds(1));
 		AtomicInteger count = new AtomicInteger(1);
+//		while(count.get() <= 10) {
+		PauseTransition halt2 = new PauseTransition(Duration.seconds(2));
+		halt2.play();
 		halt2.setOnFinished(e -> {
-			if(flag) {
-				checkWin();
-			} else if (count.get() <= 10) {
-				printState(solutionPath.get(count.get()));
+			if (count.get() <= 10) {
+				if (count.get() < solutionPath.size()) {
+				System.out.println("ENTERING ELSE");
+					printState(solutionPath.get(count.get()));
+				}
 				count.set(count.get()+1);
+				halt2.play();
 			} else {
-				;
-//				AI_H1.setDisable(emptyFlag);
+				
 			}
 		});
-		halt2.play();
+		
 	}
 //	public int[] getTempArr() {
 //		return tempArr;
