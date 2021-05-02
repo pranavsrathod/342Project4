@@ -1,4 +1,5 @@
 // Pranav Rathod and Parth Tawde
+// CS 342 Project 4
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.geometry.Pos;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.Scene;
 import javafx.scene.text.Font; 
@@ -164,27 +166,25 @@ public class JavaFXTemplate extends Application {
 		menu = new MenuBar();
 		options = new Menu("options");
 		howToPlay = new MenuItem("How To Play");
-//		AI_H1 = new MenuItem("AI_H1");
-//		AI_H2 = new MenuItem("AI_H2");
 		exit = new MenuItem("exit");
 		newPuzzle = new MenuItem("New Puzzle");
 //		solution = new MenuItem("solution");
 		
 		AI_H1.setOnAction(e->{
-			try {
-				heuristic1();
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			try {
+				heuristic2("heuristicOne",1);
+//			} catch (InterruptedException | ExecutionException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 		});
 		AI_H2.setOnAction(e->{
-			try {
-				heuristic2();
-			} catch (InterruptedException | ExecutionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			try {
+				heuristic2("heuristicTwo",2);
+//			} catch (InterruptedException | ExecutionException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 		});
 		solution.setOnAction(e -> {
 			newPuzzle.setDisable(true);
@@ -214,6 +214,7 @@ public class JavaFXTemplate extends Application {
 		menu.getMenus().addAll(options);
 		menu.setStyle("-fx-background-color: white");
 		exit.setOnAction(e -> {
+			ex.shutdown();
 			System.exit(0);
 		});
 		newPuzzle.setOnAction(e -> newGame());
@@ -231,6 +232,7 @@ public class JavaFXTemplate extends Application {
 		// making a copy of the random array
 //		int randomArray[] = arrays.get(index);
 		int randomArray[] = testArray;
+//		int randomArray[] = array10;
 		for(int i = 0; i < 16; i++) {
 			tempArr[i] = randomArray[i];
 			System.out.print(tempArr[i] + " ");
@@ -241,6 +243,7 @@ public class JavaFXTemplate extends Application {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 					GameButton box = new GameButton(tempArr[k]);
+					//System.out.println("STYLE " + box.getStyle());
 					num = tempArr[k];
 					if (tempArr[k] == 0) {
 						zeroIndex = k;
@@ -252,51 +255,93 @@ public class JavaFXTemplate extends Application {
 		}
 		for (int i = 0; i < 16; i++) {
 			configure(checkArray.get(i), i);
+			setTileColor(checkArray.get(i), i);
 		}
 		
 		
 	}
-	
-	public void heuristic1() throws InterruptedException, ExecutionException {
-		solutionPath = new ArrayList<Node>();
-		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 1, "heuristicOne"));
-		ex.submit(() -> {
-			try {
-				solutionPath.addAll(future.get());
-				solution.setDisable(false);
-			} catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
-		
+	public void setTileColor(GameButton tile, int index) {
+		if (tile.tileNum == index) {
+			tile.setStyle("-fx-background-color: Blue");
+		} else {
+			tile.setStyle ("-fx-background-color: White;");
+		}
 	}
-	public void heuristic2() throws InterruptedException, ExecutionException {
+	
+//	public void heuristic1() throws InterruptedException, ExecutionException {
+//		solutionPath = new ArrayList<Node>();
+//		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 1, "heuristicOne"));
+//		ex.submit(() -> {
+//			try {
+//				solutionPath.addAll(future.get());
+//				solution.setDisable(false);
+//			} catch (InterruptedException | ExecutionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		});
+//		
+//	}
+	public void heuristic2(String hType, int hNum){
 		solutionPath = new ArrayList<Node>();
-		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, 2, "heuristicTwo"));
-		ex.submit(() -> {
-			try {
-				solutionPath.addAll(future.get());
-				solution.setDisable(false);
-			} catch (InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		Thread t = new Thread(()-> {
+			board.setDisable(true);
+			Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, hNum, hType));
+//			Future<ArrayList<Node>> future = ex.submit(() -> {
+//				Platform.runLater(()-> {MyCall(tempArr, hNum, hType);)
+//			});
+			ex.submit(() -> {
+				try {
+					solutionPath = future.get();
+					board.setDisable(false);
+					solution.setDisable(false);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
 		});
+		t.start();
+//		Future<ArrayList<Node>> future = ex.submit(new MyCall(tempArr, hNum, hType));
+////		Future<ArrayList<Node>> future = ex.submit(() -> {
+////			Platform.runLater(()-> {MyCall(tempArr, hNum, hType);)
+////		});
+//		ex.submit(() -> {
+//			try {
+//				solutionPath = future.get();
+//				solution.setDisable(false);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		});
 	}
 	
 	private void configure(GameButton tile, int buttonPos) {
 		tile.setOnAction(e -> {
 			//System.out.println(buttonPos);
-			if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {  // left
-				swapTile(tile, checkArray.get(buttonPos - 1));
-			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {  // right
-				swapTile(tile, checkArray.get(buttonPos + 1));
-			} else if (((buttonPos - 4) >= 0) && (checkArray.get(buttonPos - 4).tileNum == 0)) {  // up
-				swapTile(tile, checkArray.get(buttonPos - 4));
-			} else if (((buttonPos + 4) <= 15) && (checkArray.get(buttonPos + 4).tileNum == 0)) {  // down
+			solution.setDisable(true);
+			
+			if (((buttonPos + 4) <= 15) && (checkArray.get(buttonPos + 4).tileNum == 0)) {  
+				// Swap with Button Below
 				swapTile(tile, checkArray.get(buttonPos + 4));
-			}
+			} else if (((buttonPos - 4) >= 0) && (checkArray.get(buttonPos - 4).tileNum == 0)) {  
+				// Swap with Button Below
+				swapTile(tile, checkArray.get(buttonPos - 4));
+			} else if((buttonPos % 4 != 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {  
+				// Swap with Button to the Left
+				swapTile(tile, checkArray.get(buttonPos - 1));
+			} else if (((buttonPos+1) % 4 != 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {  
+				// Swap with Button to the Right
+				swapTile(tile, checkArray.get(buttonPos + 1));
+			} 
+			//else if((buttonPos % 4 == 0) && (checkArray.get(buttonPos + 1).tileNum == 0)) {  
+//				// Swap with Button to the Left
+//				swapTile(tile, checkArray.get(buttonPos + 1));
+//			} else if (((buttonPos+1) % 4 == 0) && (checkArray.get(buttonPos - 1).tileNum == 0)) {  
+//				// Swap with Button to the Right
+//				swapTile(tile, checkArray.get(buttonPos - 1));
+//			}
 		});
 		
 	}
@@ -323,6 +368,8 @@ public class JavaFXTemplate extends Application {
 			zeroIndex = buttonPos2;
 		}
 //		heuristic1(tempArr);
+		setTileColor(tile1, buttonPos1);
+		setTileColor(tile2, buttonPos2);
 		checkWin();
 	}
 	public void newGame() {
@@ -354,7 +401,10 @@ public class JavaFXTemplate extends Application {
 		Button b1 = new Button("New Game");
 		Button b2 = new Button("Exit");
 		b1.setOnAction(e -> newGame());
-		b2.setOnAction(e-> System.exit(0));
+		b2.setOnAction(e-> {
+			ex.shutdown();
+			System.exit(0);
+		});
 		Label label = new Label("You Won!!");
 		label.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
 		label.setStyle("-fx-bar-fill: white;");
@@ -386,15 +436,15 @@ public class JavaFXTemplate extends Application {
 	public void Graphics() {
 		AtomicInteger count = new AtomicInteger(1);
 //		while(count.get() <= 10) {
-		PauseTransition halt2 = new PauseTransition(Duration.seconds(2));
-		halt2.play();
+		PauseTransition halt2 = new PauseTransition(Duration.seconds(1.5));
+		//halt2.play();
 		halt2.setOnFinished(e -> {
 			if (count.get() <= 10) {
 				if (count.get() < solutionPath.size()) {
-				System.out.println("ENTERING ELSE");
-					printState(solutionPath.get(count.get()));
+					//System.out.println(count.get() + " " + count.getAndIncrement());
+				//	System.out.println("ENTERING SWAPPING");
+					printState(solutionPath.get(count.getAndIncrement()));
 				}
-				count.set(count.get()+1);
 				halt2.play();
 			} else {
 				solution.setDisable(true);
@@ -404,11 +454,9 @@ public class JavaFXTemplate extends Application {
 				newPuzzle.setDisable(false);
 			}
 		});
+		halt2.play();
 		
-	}
-//	public int[] getTempArr() {
-//		return tempArr;
-//	}
+	}	
 	
 }
 

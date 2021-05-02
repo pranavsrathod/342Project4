@@ -21,7 +21,7 @@ public A_IDS_A_15solver(int aiType, int array[]){
 		
 		if(aiType == 1) {
 				
-//		System.out.println("\nStarting A* Search with heuristic #1....This may take a while\n\n");
+		System.out.println("\nStarting A* Search with heuristic #1....This may take a while\n\n");
 		
 		A_Star(startState, "heuristicOne");							//A* search with heuristic 1 (misplaced tiles)
 		
